@@ -45,7 +45,7 @@ void adicionarPalavra(){
 		fseek(f, 0, SEEK_END);
 		printf("Digite a nova palavra em letras maiusculas: ");
 		fgets(novaPalavra, 20, stdin);
-		fprintf(f, "%s", novaPalavra);
+		fputs(novaPalavra, f);
 		printf("Palavra adicionada com sucesso!");
 	}else if(quer != 'N'||quer != 'n'){
 		printf("opcao invalida!");
