@@ -3,14 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "forca.h"
-
-
-//BLOCO DE DECLARACAO DE VARIAVEIS GLOBAIS
-char palavraSecreta[20];
-char chutesDados[20];
-int erro;
-int tentativas = 0;
-
+#define ENFORCADO 7
 
 //BLOCO DE FUNCOES SECUNDARIAS
 void escolhePalavra(){
@@ -62,63 +55,80 @@ void adicionarPalavra(){
 }
 
 
-void chutar(int* nAcertos)
+void chutar()
 {	
-	char letrasCertas[20];
 	char chute;
 	int tamanhoPalavra = strlen(palavraSecreta);
+	int posicao = 0;
+	int acertou;
+	char chutesDados[20] = {'\0'};
 
+	printf("teste");
 
-	while(*nAcertos < tamanhoPalavra)
-	{
-		int j = 0;
-		if(tentativas == 7)
+	while(strcmp(letrasCertas, palavraSecreta))
+	{		
+		if(tentativas == ENFORCADO)
 		{
 			break;
 		}
 
-		if(j == 0){
+		if(posicao==0){
 			mostrarForca(tentativas);
 		}
-		
-		printf("As letras que voce ja chutou foram: %s\n", chutesDados);
+
+		printf("\nAs letras que voce ja chutou foram: %s\n", chutesDados);
 		printf("Escolha uma letra: ");
 		scanf(" %c", &chute);
-		chutesDados[j] = chute;
-		validarChute(chute, &tentativas);
-		mostrarForca(tentativas);
-		for(int z = 0; z < (signed)strlen(palavraSecreta); z++) 
-		{
-			if(chute == palavraSecreta[z])
-			{
-				printf("%c", palavraSecreta[z]);
-				(*nAcertos)++;
-				letrasCertas[z] = chute;
-			}else if(palavraSecreta[z] == letrasCertas[z])
-			{
-				printf("%c", palavraSecreta[z]);
-			}else
-			{
-				printf("_");
-			}
-
+		peencherChutesCertos(chute, tamanhoPalavra);
+		acertou = validarChute(chute, tamanhoPalavra);
+		chutesDados[posicao] = chute;
+		
+		if(acertou){
+			mostrarForca(tentativas);
+			printf("%s\n", letrasCertas);
+		}else{
+			tentativas++;
+			printf("\nA palavra secreta nao possui essa letra. Tente novamente!\n");
+			mostrarForca(tentativas);
+			printf("%s\n", letrasCertas);
 		}
-		j++;
+		
+		posicao++;
+		
+	}
+
+
+}
+
+void peencherChutesCertos(char c, int n){
+	for(int i=0;i<n;i++){
+		if(palavraSecreta[i]==c){
+			letrasCertas[i]=c;
+		}else if(letrasCertas[i]==palavraSecreta[i]){
+			letrasCertas[i]=palavraSecreta[i];
+		}else{
+			letrasCertas[i]='_';
+		}
 	}
 }
 
-void validarChute(char chute, int* tentativas){
-	for (int i = 0; i < (signed)strlen(palavraSecreta); i++){
-		if(chute == palavraSecreta[i]){
+int validarChute(char validador, int controlador){
+	int temp;
+	for(int i=0;i<controlador;i++){
+		if(validador==palavraSecreta[i]){
+			temp=1;
 			break;
-		}else if(i == ((signed)strlen(palavraSecreta) - 1)){
-			(*tentativas)++;}
+		}else{
+			temp=0;
+		}
 	}
+
+	return temp;
 }
 
-void mostrarForca()
+void mostrarForca(int n)
 {
-	switch(tentativas){
+	switch(n){
 	case 0:
 		printf("\n----------------	\n");
 		printf("|---------------	\n");
@@ -204,6 +214,16 @@ void mostrarForca()
 		printf("\n");
 		break;
 	default:
+		printf("\n----------------	\n");
+		printf("|---------------	\n");
+		printf("| /            |	\n");
+		printf("|/           (:-()	\n");
+		printf("|             /|\\	\n");
+		printf("|              |	\n");
+		printf("|              /\\	\n"); 
+		printf("|					\n");
+		printf("|					\n");
+		printf("\n");
 		printf("Enforcado!!\n");
 	}
 	
@@ -227,8 +247,8 @@ void mensagemInicio(){
 	
 }
 
-void mensagemFim(int* nAcertos){
-	if(*nAcertos == (signed)strlen(palavraSecreta))
+void mensagemFim(){
+	if(!strcmp(letrasCertas, palavraSecreta))
 	{
 		printf("\nParabens! Voce acertou a palavra secreta\n.");
 		printf("		     ___________															\n");
@@ -259,7 +279,7 @@ void mensagemFim(int* nAcertos){
 	}else
 	{
 		printf("\nVoce foi enforcado! A palavra secreta era %s \n", palavraSecreta);
-		mostrarForca();
+		mostrarForca(tentativas);
 		printf("		     .... NÃO! ... ... MNO! ...							\n");
 		printf("   ..... NÃO!! ...................... MNNOO! ...				\n");
 		printf(" ..... MM NÃO! ......................... MNNOO!! .				\n");
@@ -288,13 +308,13 @@ void mensagemFim(int* nAcertos){
 }
 
 
+
 //INICIO FUNCAO PRINCIPAL
 int main()
 {
-	int nAcertos = 0;
 	int menu = 0;
 	mensagemInicio();
-	while(menu != 3){
+	
 		printf("Escolha uma opcao: \n1 - jogar\n2 - adicionar palavra ao banco de dados\n3 - sair\n");
 		scanf(" %d", &menu);
 
@@ -305,22 +325,20 @@ int main()
 
 		switch(menu){
 		case 1:
+			tentativas = 0;
 			escolhePalavra();
 			printf("A palavra secreta possui %d letras\n", strlen(palavraSecreta));
-			chutar(&nAcertos);
-			mensagemFim(&nAcertos);
+			system("pause");
+			chutar();
+			mensagemFim();
 			break;
 		case 2:
 			adicionarPalavra();
 			break;
 		default:
+			printf("Ate mais!");
 			return 0;
 		}
-
-	}
-	
-
-	printf("Ate mais!");
-	
+		
 	return 0;
 }

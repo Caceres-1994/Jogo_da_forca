@@ -1,7 +1,11 @@
+char palavraSecreta[20];
+char letrasCertas[20];
+int tentativas;
 void escolhePalavra();
-void mostrarForca();
-void chutar(int* nAcertos);
-void mensagemInicio();
-void mensagemFim(int* nAcertos);
-void validarChute(char chute, int* tentativas);
 void adicionarPalavra();
+void chutar();
+void peencherChutesCertos(char, int);
+int validarChute(char validador, int controlador);
+void mostrarForca(int);
+void mensagemInicio();
+void mensagemFim();
